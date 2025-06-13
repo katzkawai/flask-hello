@@ -1,114 +1,144 @@
 <!DOCTYPE html>
-<html lang="ja">
+<!-- HTML5文書であることを宣言 -->
+<html lang="ja">  <!-- 日本語のページであることを指定 -->
 <head>
+    <!-- 文字コードをUTF-8に設定（日本語を正しく表示するため） -->
     <meta charset="UTF-8">
+    <!-- レスポンシブデザイン用の設定（スマホでも見やすくする） -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時間帯で変わるWebアプリ</title>
+    
+    <!-- CSSスタイルシートの開始 -->
     <style>
+        /* 全要素に適用される基本設定 */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0;          /* 外側の余白をゼロに */
+            padding: 0;         /* 内側の余白をゼロに */
+            box-sizing: border-box;  /* paddingやborderを幅・高さに含める */
         }
         
+        /* ページ全体のスタイル */
         body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;      /* ビューポートの高さいっぱいに */
+            display: flex;          /* フレックスボックスレイアウトを使用 */
+            justify-content: center; /* 水平方向に中央寄せ */
+            align-items: center;     /* 垂直方向に中央寄せ */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* フォントの指定 */
+            /* Flaskから渡された背景色を適用（{{ }}はJinja2テンプレート構文） */
             background: {{ time_info.background }};
-            transition: background 0.5s ease;
+            transition: background 0.5s ease;  /* 背景色が変わるときのアニメーション */
         }
         
+        /* メインコンテナのスタイル */
         .container {
-            text-align: center;
+            text-align: center;     /* テキストを中央寄せ */
+            /* 半透明の白背景（rgba: 赤,緑,青,透明度） */
             background: rgba(255, 255, 255, 0.9);
-            padding: 3rem;
-            border-radius: 20px;
+            padding: 3rem;          /* remは相対的な単位（1rem = 16px） */
+            border-radius: 20px;    /* 角を丸くする */
+            /* 影をつける（横方向 縦方向 ぼかし 色） */
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            max-width: 500px;
-            width: 90%;
+            backdrop-filter: blur(10px);  /* 背景をぼかす効果 */
+            max-width: 500px;       /* 最大幅を500pxに制限 */
+            width: 90%;             /* 画面幅の90%を使用 */
         }
         
+        /* アイコンコンテナのスタイル */
         .time-icon {
             width: 120px;
             height: 120px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 2rem;    /* 上0, 左右auto（中央寄せ）, 下2rem */
+            /* floatアニメーションを3秒かけて繰り返し実行 */
             animation: float 3s ease-in-out infinite;
         }
         
+        /* 浮遊アニメーションの定義 */
         @keyframes float {
             0% {
-                transform: translateY(0px);
+                transform: translateY(0px);     /* 開始位置 */
             }
             50% {
-                transform: translateY(-20px);
+                transform: translateY(-20px);   /* 上に20px移動 */
             }
             100% {
-                transform: translateY(0px);
+                transform: translateY(0px);     /* 元の位置に戻る */
             }
         }
         
+        /* 挨拶文のスタイル */
         .greeting {
-            font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 1rem;
-            font-weight: bold;
+            font-size: 2.5rem;      /* 文字サイズ */
+            color: #333;            /* 濃いグレー */
+            margin-bottom: 1rem;    /* 下側の余白 */
+            font-weight: bold;      /* 太字 */
         }
         
+        /* 時間帯表示のスタイル */
         .period {
             font-size: 1.5rem;
-            color: #666;
+            color: #666;            /* 中間のグレー */
             margin-bottom: 2rem;
         }
         
+        /* 現在時刻表示のスタイル */
         .current-time {
             font-size: 1.2rem;
-            color: #888;
-            font-weight: 300;
+            color: #888;            /* 薄いグレー */
+            font-weight: 300;       /* 細い文字 */
         }
         
+        /* アイコン背景のスタイル */
         .icon-placeholder {
             width: 120px;
             height: 120px;
+            /* グラデーション背景（45度の角度で薄いグレーから明るいグレーへ） */
             background: linear-gradient(45deg, #ddd, #eee);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
+            border-radius: 50%;     /* 完全な円にする */
+            display: flex;          /* フレックスボックスを使用 */
+            align-items: center;    /* 垂直方向に中央寄せ */
+            justify-content: center; /* 水平方向に中央寄せ */
+            font-size: 3rem;        /* 絵文字のサイズ */
         }
     </style>
 </head>
 <body>
+    <!-- メインコンテナ -->
     <div class="container">
+        <!-- アイコン表示部分 -->
         <div class="time-icon">
             <div class="icon-placeholder">
+                <!-- Jinja2のif文で時間帯に応じたアイコンを表示 -->
                 {% if time_info.period == 'morning' %}
-                    🌅
+                    🌅  <!-- 朝のアイコン（日の出） -->
                 {% elif time_info.period == 'late_morning' %}
-                    ☀️
+                    ☀️  <!-- 午前のアイコン（太陽） -->
                 {% elif time_info.period == 'afternoon' %}
-                    🌞
+                    🌞  <!-- 午後のアイコン（輝く太陽） -->
                 {% elif time_info.period == 'evening' %}
-                    🌆
+                    🌆  <!-- 夕方のアイコン（夕焼け） -->
                 {% else %}
-                    🌙
+                    🌙  <!-- 夜のアイコン（月） -->
                 {% endif %}
             </div>
         </div>
+        
+        <!-- 挨拶文（Flaskから渡された値を表示） -->
         <h1 class="greeting">{{ time_info.greeting }}</h1>
+        
+        <!-- 現在の時間帯を表示 -->
         <p class="period">今は{{ time_info.period_ja }}です</p>
+        
+        <!-- 現在時刻を表示 -->
         <p class="current-time">{{ current_time }}</p>
     </div>
     
+    <!-- JavaScript部分 -->
     <script>
-        // 60秒ごとにページをリロードして時間を更新
+        // 60秒（60000ミリ秒）後にページを自動更新する
+        // これにより、時間が変わったときに表示も自動的に更新される
         setTimeout(() => {
-            location.reload();
-        }, 60000);
+            location.reload();  // ページをリロード
+        }, 60000);  // 60000ミリ秒 = 60秒
     </script>
 </body>
 </html>
