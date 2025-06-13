@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>時間帯で変わるWebアプリ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: {{ time_info.background }};
+            transition: background 0.5s ease;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .time-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        .greeting {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .period {
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .current-time {
+            font-size: 1.2rem;
+            color: #888;
+            font-weight: 300;
+        }
+        
+        .icon-placeholder {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #ddd, #eee);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="time-icon">
+            <div class="icon-placeholder">
+                {% if time_info.period == 'morning' %}
+                    🌅
+                {% elif time_info.period == 'late_morning' %}
+                    ☀️
+                {% elif time_info.period == 'afternoon' %}
+                    🌞
+                {% elif time_info.period == 'evening' %}
+                    🌆
+                {% else %}
+                    🌙
+                {% endif %}
+            </div>
+        </div>
+        <h1 class="greeting">{{ time_info.greeting }}</h1>
+        <p class="period">今は{{ time_info.period_ja }}です</p>
+        <p class="current-time">{{ current_time }}</p>
+    </div>
+    
+    <script>
+        // 60秒ごとにページをリロードして時間を更新
+        setTimeout(() => {
+            location.reload();
+        }, 60000);
+    </script>
+</body>
+</html>
