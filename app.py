@@ -103,4 +103,4 @@ def index():
 if __name__ == '__main__':
     # debug=True にすると、ファイルを変更したときに自動的にサーバーが再起動する
     # 本番環境では debug=False にする必要がある
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
